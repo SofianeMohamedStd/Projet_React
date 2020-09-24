@@ -1,13 +1,17 @@
 import React, {Component} from 'react';
-import Datagames from '../data/Datagmes.json';
 import Games from './Games';
+import Autocomplete from './Autocomplete';
+import { API_BASE_URL } from '../config';
+import axios from 'axios';
+import {Link} from "react-router-dom";
 
 class Allgames extends Component {
 
     constructor (props) {
         super(props)
         this.state = {
-            postList: []
+            postList: [],
+            //isLoading: null
         }
     }
     sortByTitleA () {
@@ -73,13 +77,16 @@ class Allgames extends Component {
     }
 
     componentDidMount () {
-        this.setState({
-            postList: Datagames
-        })
+       this.getGames();
+    }
+    async getGames() {
+     axios.get(API_BASE_URL + '/games').then(postListe => {
+       this.setState({postList: postListe.data})
+     })
     }
    
     render(){
-        const {postList} = this.state
+        //console.log(this.state.postList.titre)
         const toggleSortTitleA = (event) => {
             this.sortByTitleA()
           }
@@ -101,10 +108,19 @@ class Allgames extends Component {
                <button type={"button"} className={"btn btn-success"} onClick={toggleSortDateA}>Trier par date de sortie croissant</button>
                <button type={"button"} className={"btn btn-danger"} onClick={toggleSortTitleD}>Trier par ordre alphabetique croissant</button>
                <button type={"button"} className={"btn btn-warning"} onClick={toggleSortTitleA}>Trier par ordre alphabetique decroissant</button>
+               <hr/>
+               <Link
+                   to={{ pathname: `/ajoutG`.replace(/\s/g, '')}}
+               >
+                   <div>
+                   <button type={"button"} className={"btn btn-warning"}>Ajouter un nouveau jeu</button>
+                   </div>
+
+               </Link>
                <div className={"album py-5 bg-light"}>
         <div className={"container"}>
         <div className={"row"}>
-               {postList.map((game, index) => {
+               {this.state.postList.map((game, index) => {
          return <Games 
          post={game}
          key={`post-list-key ${index}`}

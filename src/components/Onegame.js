@@ -1,4 +1,9 @@
 import React,{Component} from 'react'
+import axios from "axios";
+import {API_BASE_URL} from "../config";
+import CommentForm from "./CommentForm";
+import ListComment from "./ListComment";
+import Comments from "./Comments";
 
 
 class Onegame extends Component{
@@ -7,75 +12,54 @@ class Onegame extends Component{
     
        this.input=React.createRef()
        this.state={
-           list:[],
+           games:[],
+           studio:{}
           }
     }
-    
-    addComment=()=>{
-      const postItem = this.props.location.state;
-    const Items={
-            id: postItem.id,
-            value:this.input.current.value,
-            Date: new Date().toUTCString()
-        };
-    
-        if(localStorage.getItem('list')==null){
-            const list=[]
-            list.push(Items);
-            localStorage.setItem("list",JSON.stringify(list))
-        }
-        else{
-            const list=JSON.parse(localStorage.getItem('list'))
-            list.push(Items)
-            localStorage.setItem("list",JSON.stringify(list))
-        }
-        this.setState({
-            list:JSON.parse(localStorage.getItem('list'))
-        });
+
+    getGame(){
+
+        return this.props.match.params.id;
     }
-    
+
     componentDidMount() {
-        const list = window.localStorage.getItem('list');
-        const parsedList = JSON.parse(list);
-        if(list == null){
-            return false
-        }
-        else{
-            this.setState({
-                list: parsedList,
+
+        const game = this.getGame()
+
+        axios({
+            url: API_BASE_URL+"/game/"+game,
+            method: 'GET',
+        })
+            .then(response => {
+                this.setState({games: response.data, studio: response.data.studio});
             })
-            console.log(this.state.list);
-        }
+            .catch(err => {
+                console.error(err);
+            });
+
     }
-    
-    deleteItem=(event)=> {
-        
-        let index = event.target.getAttribute('data-key')
-        let listValue=JSON.parse(localStorage.getItem('list'));
-        listValue.splice(index,1)
-        this.setState({list:listValue});
-        localStorage.setItem('list',JSON.stringify(listValue))
-    }
-    
-    
-    
     render()
     {
-        const postItem = this.props.location.state;
+        const game = this.state.games;
+        const studio = this.state.studio;
+        const urGame =this.getGame()
+        console.log(urGame)
+
+
         return (
           <>
              <div className="container">
                 <div className="flex-column align-items-start bd-highlight">
 
                     <div className="d-flex justify-content-center pt-5">
-                        <h2>{postItem.titre}</h2>
+                        <h2>{game.titre}</h2>
                     </div>
                     <div className="d-flex pt-5">
                      <div className="d-flex flex-column">
-                     <img src={postItem.image} className={"card-img-top"} style={{width: "300px"}} alt="..."></img>
-                     <p><span className="font-weight-bold">Categorie : </span>{postItem.categorie}</p>
-                     <p><span className="font-weight-bold">Année de sortie : </span>{postItem.annee}</p>
-                     <p><span className="font-weight-bold">studio : </span>{postItem.studio}</p>
+                     <img src={game.image} className={"card-img-top"} style={{width: "300px"}} alt="..."></img>
+                     <p><span className="font-weight-bold">Studio : </span>{studio.NomStudio}</p>
+                     <p><span className="font-weight-bold">Année de sortie : </span>{game.annee}</p>
+
                      </div>
 
 
@@ -84,50 +68,15 @@ class Onegame extends Component{
                     <div className="d-flex flex-column ml-5">
                         <div className=" text-break mb-5">
                             <p className="font-weight-bold">Content :</p>
-                                {postItem.content}
+                               <p>Assassin's Creed est une série de jeux vidéo historique d'action-aventure et d'infiltration en monde ouvert, développée et éditée par Ubisoft. Les titres principaux développés par Ubisoft Montréal sont sortis sur les consoles de 7ᵉ, 8ᵉ génération et prochainement sur la 9ᵉ génération ainsi que sur PC, tandis que les épisodes secondaires sont sortis sur consoles portables et sur téléphones portables.</p>
                         </div>
                     </div>
 
                 </div>
              </div>
+              <ListComment children={urGame}/>
 
-             <div className="main-container">
-                <h1>Commentaire</h1>
-                <hr/>
-                <div className="container">
-                    
-                       
-                        <div className="d-flex justify-content-center">
-                            
-                                
-                                <input type="text" placeholder="AddComment..." ref={this.input}></input>
-                                <button onClick={this.addComment} className="button" >Add</button>
-                            
-                        </div>
-                    
-                   
-                        <div>
-                                {
-                                    this.state.list.map( function (item,index)
-                                    {
-                                      if (postItem.id === item.id) {
-                                          return(
-                                            <div className="card-body" key={index}>
-                                                {item.value}<br/>
-                                                <span className="btn btn-theme">{item.Date}</span>
-                                            </div>
-                                            
-                                                
-                                            
-                                        )
-                                      }
-                                      
-                                    })
-                                } 
-                            </div>
-                </div>
-                
-            </div>
+              <CommentForm children={game.id}/>
           </>
         )
     }

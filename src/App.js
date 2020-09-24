@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Allgames from './components/Allgames';
 import Onegame from './components/Onegame';
+import CreateGame from "./components/CreateGame";
 
 import './App.css';
 
@@ -15,7 +16,8 @@ function App() {
     <Router>
     <Switch>
       <Route exact path="/" component={Allgames}/>
-    <Route path="/post/:id" component={Onegame} />
+    <Route path="/game/:id" component={Onegame} />
+    <Route path={"/ajoutG/"} component={CreateGame} />
    
    </Switch>
     </Router>

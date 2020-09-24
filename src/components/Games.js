@@ -28,7 +28,6 @@ class Games extends Component {
        
        render(){
         const {postItem} = this.state
-        
         return(
             
             
@@ -36,17 +35,15 @@ class Games extends Component {
             {postItem !== null
              ?
             <div className={"col-md-4"}>
-             <div className={"card"} style={{width: "300px"}}>
-                 <img src={postItem.image} className={"card-img-top"} alt="..."></img>
+             <div className={"card"} >
+                 <img style={{width: "350px", height:"300px"}} src={postItem.image} className={"card-img-top"} alt="..."></img>
                 <div className={'card-body text-center'} >
                     <p className={'card-title'}> Titre: <strong>{postItem.titre}</strong> </p>
-                    <p className={"list-group-item"}>Categorie: <strong>{postItem.categorie}</strong> </p>
                     <p className={"list-group-item"}> Année: <strong>{postItem.annee}</strong>  </p>
-                    <p className={"list-group-item"}> studio: <strong>{postItem.studio}</strong> </p>
                     <ul className="scroll-list">
             
                         <Link
-                            to={{ pathname: `/post/${postItem.id}`, state: postItem}}
+                            to={{ pathname: `/game/${postItem.id}`.replace(/\s/g, '')}}
                         >
                             <h5>see More...</h5>
               
