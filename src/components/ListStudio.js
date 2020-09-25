@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {API_BASE_URL} from "../config";
-import Comments from "./Comments";
+import Studio from "./Studio";
+
 
 class ListStudio extends Component {
     constructor(props) {
@@ -13,41 +14,71 @@ class ListStudio extends Component {
 
 
     }
-    componentDidMount() {
-
-
-
-        axios({
-            url: API_BASE_URL+"/studio/",
-            method: 'GET',
+    componentDidMount () {
+        this.getGames();
+    }
+    async getGames() {
+        axios.get(API_BASE_URL + '/studio').then(List => {
+            this.setState({List: List.data,loading: false})
         })
-            .then(response => {
-                this.setState({List: response.data,loading: false});
-            })
-            .catch(err => {
-                console.error(err);
-            });
-
     }
     render() {
-
+        const loading = this.state.loading;
 
         return(
             <>
-                <div className={"album py-5 bg-light"}>
-                    <div className={"container"}>
-                        <div className={"row"}>
-                            {this.state.List.map((game, index) => {
-                                return <Comments
-                                    post={game}
-                                    key={`post-list-key ${index}`}
-                                />
-                            })}
-
-                        </div>
+                {loading ? (
+                    <div className={'row text-center'}>
+                        <span className="fa fa-spin fa-spinner fa-4x"></span>
                     </div>
-                </div>
+                ) : (
+                    <div className={'row'}>
+                        { this.state.List.map(user =>
+                            <div className="col-md-10 offset-md-1 row-block" key={user.id}>
+                                <ul id="sortable">
+                                    <li>
+                                        <div className="media">
 
+                                            <div className="media-body">
+                                                <h4>{user.id}</h4>
+                                                <p>{user.NomStudio}</p>
+                                            </div>
+                                            <div className="media-right align-self-center">
+                                                <a href="#" className="btn btn-default">Contact Now</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                )}
+                {loading ? (
+                    <div className={'row text-center'}>
+                        <span className="fa fa-spin fa-spinner fa-4x"></span>
+                    </div>
+                ) : (
+                    <div className={'row'}>
+                        { this.state.List.map(user =>
+                            <div className="col-md-10 offset-md-1 row-block" key={user.id}>
+                                <ul id="sortable">
+                                    <li>
+                                        <div className="media">
+
+                                            <div className="media-body">
+                                                <h4>{user.id}</h4>
+                                                <p>{user.NomStudio}</p>
+                                            </div>
+                                            <div className="media-right align-self-center">
+                                                <a href="#" className="btn btn-default">Contact Now</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                )}
             </>
         )
     }

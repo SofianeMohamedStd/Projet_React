@@ -10,6 +10,11 @@ import CreateGame from "./components/CreateGame";
 
 import './App.css';
 
+
+import ListStudio from "./components/ListStudio";
+import EditGame from "./components/EditGame";
+
+
 function App() {
   return (
     <div className="App">
@@ -17,7 +22,9 @@ function App() {
     <Switch>
       <Route exact path="/" component={Allgames}/>
     <Route path="/game/:id" component={Onegame} />
-    <Route path={"/ajoutG/"} component={CreateGame} />
+    <Route path="/editGame/:id" component={EditGame} />
+    <Route path="/ajoutG/" component={CreateGame} />
+    <Route path="/studio/" component={ListStudio} />
    
    </Switch>
     </Router>

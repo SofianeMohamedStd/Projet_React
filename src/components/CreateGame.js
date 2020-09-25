@@ -14,31 +14,21 @@ export class CreateGame extends Component{
             studio:'',
             categorie:'',
             image:'',
+            List: [],
+            loading: true,
 
 
         }
-        this.etat = {
-            postItem: null,
-        }
-
     }
-    setPostStateOnProps(){
-        const {post} = this.props
-        this.setState({
-            postItem: post,
 
-
+    componentDidMount () {
+        this.getGames();
+    }
+    async getGames() {
+        axios.get(API_BASE_URL + '/studio').then(List => {
+            this.setState({List: List.data,loading: false})
         })
     }
-    componentDidUpdate(prevProps, prevState, snapshop){
-        if (this.props !== prevProps){
-            this.setPostStateOnProps()
-        }
-    }
-    componentDidMount(){
-        this.setPostStateOnProps()
-    }
-
     changeHandler = (e) => {
         this.setState({[e.target.name]: e.target.value})
     }
@@ -57,11 +47,12 @@ export class CreateGame extends Component{
     }
 
 
+
     render(){
         const {titre, annee, studio, categorie, image} = this.state
-        const {postItem} = this.etat
-        console.log(this.etat)
-        console.log(this.props.post);
+
+console.log(this.props.studio)
+        const loading = this.state.loading;
         return(
             <div>
                 <div>
@@ -72,7 +63,7 @@ export class CreateGame extends Component{
                         <div className="col-xs-12 col-sm-6">
                             <div className="form-group fl_icon">
                                 <div className={"icon"}><i className={"fa fa-user"}/></div>
-                                <input className={"form-input"} type="text" name="titre" value={titre} placeholder={"Titre"}
+                                <input className={"form-input"} type="text" name="titre" value={titre} placeholder={"titre"}
     onChange={this.changeHandler}/>
                             </div>
                         </div>
@@ -84,11 +75,14 @@ export class CreateGame extends Component{
     onChange={this.changeHandler}/>
                             </div>
                         </div>
-                        <div className="col-xs-12 col-sm-6 fl_icon">
-                            <div className="form-group fl_icon">
-                                <div className="icon"><i className="fa fa-envelope-o"/></div>
-                                <input className={"form-input"} type="text" name="studio" value={studio} placeholder={"studio"}
-    onChange={this.changeHandler}/>
+                        <div className="col-xs-6 col-sm-6 fl_icon">
+                            <div className="form-group">
+                                <label htmlFor="exampleFormControlSelect2">Studio</label>
+                                <select multiple className="form-control" name="studio" value={studio}  onChange={this.changeHandler}>
+                                    { this.state.List.map(user =>
+                                        <option>{user.id}</option>
+                                    )}
+                                </select>
                             </div>
                         </div>
                         <div className="col-xs-12 col-sm-6 fl_icon">
